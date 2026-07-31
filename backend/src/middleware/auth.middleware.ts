@@ -4,6 +4,11 @@ import { User } from '../models/User';
 
 export interface AuthRequest extends Request {
   userId?: string;
+  body: any;
+  params: any;
+  query: any;
+  file?: Express.Multer.File;
+  files?: { [fieldname: string]: Express.Multer.File[] } | Express.Multer.File[];
 }
 
 export const protect = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
