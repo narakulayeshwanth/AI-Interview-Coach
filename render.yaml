@@ -1,0 +1,31 @@
+services:
+  - type: web
+    name: ai-interview-coach-api
+    runtime: node
+    rootDir: backend
+    buildCommand: npm install && npm run build
+    startCommand: npm run start
+    healthCheckPath: /api/health
+    envVars:
+      - key: PORT
+        value: 10000
+      - key: NODE_ENV
+        value: production
+      - key: MONGODB_URI
+        sync: false          # Set this in the Render dashboard
+      - key: JWT_SECRET
+        sync: false          # Set this in the Render dashboard
+      - key: JWT_EXPIRES_IN
+        value: 7d
+      - key: NVIDIA_API_KEY
+        sync: false          # Set this in the Render dashboard
+      - key: NVIDIA_API_BASE
+        value: https://integrate.api.nvidia.com/v1
+      - key: NVIDIA_MODEL
+        value: meta/llama-3.1-70b-instruct
+      - key: CLIENT_URL
+        sync: false          # Set to your Vercel frontend URL, e.g. https://ai-interview-coach.vercel.app
+      - key: MAX_FILE_SIZE
+        value: 5242880
+      - key: UPLOAD_DIR
+        value: uploads

@@ -4,8 +4,8 @@ import dns from 'dns';
 export const connectDB = async (): Promise<void> => {
   const uri = process.env.MONGODB_URI;
   if (!uri) {
-    console.error('❌ MONGODB_URI is not set in environment variables');
-    process.exit(1);
+    console.warn('⚠️ MONGODB_URI is not set. Server will run without database.');
+    return;
   }
   try {
     await mongoose.connect(uri);
@@ -19,11 +19,12 @@ export const connectDB = async (): Promise<void> => {
         console.log('✅ MongoDB connected (via Google DNS)');
         return;
       } catch (retryErr) {
-        console.error('❌ MongoDB connection failed even after retrying with Google DNS:', retryErr);
-        process.exit(1);
+        console.warn('⚠️ MongoDB connection failed even after retrying with Google DNS. Server will run without database.');
+        console.error('   Reason:', (retryErr as Error).message);
+        return;
       }
     }
-    console.error('❌ MongoDB connection failed:', err);
-    process.exit(1);
+    console.warn('⚠️ MongoDB connection failed. Server will run without database.');
+    console.error('   Reason:', err.message);
   }
 };
