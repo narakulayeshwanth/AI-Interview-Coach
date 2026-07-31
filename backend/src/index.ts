@@ -25,7 +25,22 @@ const uploadDir = path.join(__dirname, '..', process.env.UPLOAD_DIR || 'uploads'
 if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
 
 // Middleware
-app.use(cors({ origin: process.env.CLIENT_URL || 'http://localhost:3000', credentials: true }));
+const allowedOrigins = [
+  process.env.CLIENT_URL || 'http://localhost:3000',
+  'http://localhost:3000',
+];
+app.use(cors({
+  origin: (origin, callback) => {
+    // Allow requests with no origin (curl, mobile apps, server-to-server)
+    if (!origin) return callback(null, true);
+    // Allow any vercel.app subdomain
+    if (origin.endsWith('.vercel.app')) return callback(null, true);
+    // Allow configured CLIENT_URL
+    if (allowedOrigins.includes(origin)) return callback(null, true);
+    callback(new Error(`CORS blocked: ${origin}`));
+  },
+  credentials: true,
+}));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use('/uploads', express.static(uploadDir));
